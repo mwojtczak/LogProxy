@@ -9,32 +9,17 @@ app = Flask(__name__)
 QRADAR_PORT = 514
 
 
-class Log:
-    def __init__(self, src_ip, dst_ip, url, timestamp=None):
-        self.src_ip = src_ip
-        self.dst_ip = dst_ip
-        self.url = url
-        self.timestamp = timestamp
-
-    def format_log(self):
-        return f'MONIT: src_ip={self.src_ip}'
-
-
 @app.route("/")
 def hello():
-    return "Test page"
+    return "Welcome to the home page of LogProxy server."
 
 
 @app.route('/add_log/', methods=["POST"])
 def add_request_source_ip():
     data = request.get_json()
-    src_ip = data['src_ip']
-    dst_ip = data['dst_ip']
-    url = data['url']
-    timestamp = data['timestamp']
-    log = Log(src_ip, dst_ip, url, timestamp)
+    log = data['log']
     log_queue.put(log)
-    return (f'OK, log added: {log.format_log()}\n', 201)
+    return (f'Log added: {log}\n', 201)
 
 
 class SyslogClient:
@@ -49,14 +34,16 @@ class SyslogClient:
         return s
 
     def send_data(self, data):
-        self.socket.send(bytes(f'{data}\n', "utf8"))
+        res = self.socket.send(bytes(f'{data}\n', "utf8"))
+        if res <= 0:
+            print(f"Error sending message {data}")
 
 
 def send_log(client, log_queue):
     while True:
         if not log_queue.empty():
             log = log_queue.get()
-            client.send_data(log.format_log())
+            client.send_data(log)
 
 
 if __name__ == '__main__':
