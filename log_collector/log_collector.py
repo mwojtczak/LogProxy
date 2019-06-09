@@ -9,7 +9,7 @@ import requests
 LOG_FORMAT = "LOGPROXY:: src_ip={src_ip} timestamp={timestamp} url={url}"
 
 
-class RequestScrapper:
+class LogCollector:
     def __init__(self, log_proxy_ip, log_proxy_port, log_format=None):
         self.log_proxy_ip = log_proxy_ip
         self.log_proxy_port = log_proxy_port
