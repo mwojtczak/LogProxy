@@ -10,19 +10,22 @@ There are 3 steps required to use stat collector, assuming LogProxy is deployed 
 from stat_collector import stat_collector
 2. initialise Request scrapper with LogProxy ip address and port number
 scrapper = stat_collector.RequestScrapper(LOPPROXY_IP, LOGPROXY_PORT)
-3. add decorator to view method to send statistics of given endpoint
+3. decorate view method to send statistics of given endpoint
 @scrapper.log
 """
-from flask import Flask
-import sys
 import os.path
+import sys
+
+from flask import Flask
+
 sys.path.append(
-    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
+    os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+)
 from stat_collector import stat_collector
 
 app = Flask(__name__)
 
-LOGPROXY_IP = '0.0.0.0'
+LOGPROXY_IP = "0.0.0.0"
 LOGPROXY_PORT = 8080
 
 scrapper = stat_collector.RequestScrapper(LOGPROXY_IP, LOGPROXY_PORT)
@@ -40,5 +43,5 @@ def test():
     return "Test page"
 
 
-if __name__ == '__main__':
-    app.run('0.0.0.0', 5000)
+if __name__ == "__main__":
+    app.run("0.0.0.0", 5000)

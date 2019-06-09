@@ -1,9 +1,10 @@
 import datetime
 import functools
-import flask
-import requests
 import json
 from functools import lru_cache
+
+import flask
+import requests
 
 LOG_FORMAT = "LOGPROXY:: src_ip={src_ip} timestamp={timestamp} url={url}"
 
@@ -13,18 +14,19 @@ class RequestScrapper:
         self.log_proxy_ip = log_proxy_ip
         self.log_proxy_port = log_proxy_port
         self.log_format = log_format or LOG_FORMAT
+        self.session = requests.session()
 
     @property
     @lru_cache(None)
     def logproxy_endpoint(self):
-        return f'http://{self.log_proxy_ip}:{self.log_proxy_port}/add_log/'
+        return f"http://{self.log_proxy_ip}:{self.log_proxy_port}/add_log/"
 
     @staticmethod
     def _gather_data(request):
         return {
-            'src_ip': request.remote_addr,
-            'url': request.url,
-            'timestamp': datetime.datetime.now().timestamp(),
+            "src_ip": request.remote_addr,
+            "url": request.url,
+            "timestamp": datetime.datetime.now().timestamp(),
         }
 
     def _format_log(self, data):
@@ -32,8 +34,10 @@ class RequestScrapper:
 
     def send_log(self, data):
         log = self._format_log(data)
-        headers = {'Content-type': 'application/json'}
-        r = requests.post(self.logproxy_endpoint, data=json.dumps({'log': log}), headers=headers)
+        headers = {"Content-type": "application/json"}
+        r = self.session.post(
+            self.logproxy_endpoint, data=json.dumps({"log": log}), headers=headers
+        )
         if r.status_code != 201:
             print("Sending log failed")
 

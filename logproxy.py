@@ -1,8 +1,8 @@
 import os
-from multiprocessing import Process, Queue
-from flask import Flask
-from flask import request
 import socket
+from multiprocessing import Process, Queue
+
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -14,12 +14,12 @@ def hello():
     return "Welcome to the home page of LogProxy server."
 
 
-@app.route('/add_log/', methods=["POST"])
+@app.route("/add_log/", methods=["POST"])
 def add_request_source_ip():
     data = request.get_json()
-    log = data['log']
+    log = data["log"]
     log_queue.put(log)
-    return (f'Log added: {log}\n', 201)
+    return (f"Log added: {log}\n", 201)
 
 
 class SyslogClient:
@@ -34,7 +34,7 @@ class SyslogClient:
         return s
 
     def send_data(self, data):
-        res = self.socket.send(bytes(f'{data}\n', "utf8"))
+        res = self.socket.send(bytes(f"{data}\n", "utf8"))
         if res <= 0:
             print(f"Error sending message {data}")
 
@@ -46,15 +46,16 @@ def send_log(client, log_queue):
             client.send_data(log)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     log_queue = Queue()
-    QRADAR_IP = os.environ['QRADAR_IP']
+    QRADAR_IP = os.environ["QRADAR_IP"]
+    QRADAR_PORT = os.environ["QRADAR_PORT"] or QRADAR_PORT
     try:
         qradar_client = SyslogClient(QRADAR_IP, QRADAR_PORT)
     except socket.error as e:
         print(f"Cannot connect to {QRADAR_IP}:{QRADAR_PORT} due to {e}, exiting")
         exit(1)
-    http_server = Process(target=app.run, kwargs={"host": '0.0.0.0', "port": 8080})
+    http_server = Process(target=app.run, kwargs={"host": "0.0.0.0", "port": 8080})
     syslog_client = Process(target=send_log, args=(qradar_client, log_queue))
     http_server.start()
     syslog_client.start()
