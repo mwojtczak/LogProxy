@@ -25,14 +25,16 @@ from log_collector import log_collector
 
 app = Flask(__name__)
 
+# define IP address and port number of LogProxy server
 LOGPROXY_IP = "0.0.0.0"
 LOGPROXY_PORT = 8080
 
+# initialise LogCollector
 scrapper = log_collector.LogCollector(LOGPROXY_IP, LOGPROXY_PORT)
 
 
 @app.route("/")
-@scrapper.log
+@scrapper.log  # use log decorator to gather data from endopoint requests
 def main():
     return "Main page"
 
