@@ -48,13 +48,23 @@ class SyslogClient:
         sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_KEEPCNT, self.TCP_MAX_FAILS)
         self.socket = sock
 
+    def _recover_socket(self):
+        print("Recovering socket")
+        if self.socket:
+            self.socket.close()
+        self.create_connection()
+
     def send_data(self, data):
-        sent = self.socket.send(bytes(f"{data}\n", "utf8"))
-        if sent <= 0:
-            print(f"Error sending message {data}, restoring connection")
-            self.create_connection()
-        else:
-            print(f"Successfully transmitted {data}")
+        try:
+            sent = self.socket.send(bytes(f"{data}\n", "utf8"))
+            if sent <= 0:
+                print(f"Error sending message {data}, restoring connection")
+                self._recover_socket()
+            else:
+                print(f"Successfully transmitted {data}")
+        except socket.error as e:
+            self._recover_socket()
+            self.send_data(data)
 
 
 def send_log(client):
