@@ -28,7 +28,6 @@ def add_request_source_ip():
 
 
 class SyslogClient:
-    TCP_KEEPALIVE = 0x10
     TCP_TIMEOUT = 10
     TCP_IDLE_AFTER_SECONDS = 2
     TCP_INTERVAL_SECONDS = 3
