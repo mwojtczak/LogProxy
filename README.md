@@ -28,4 +28,66 @@ curl -i -X POST -H "Content-Type: application/json"  -d '{"src_ip": "1.1.1.1", "
 ```
 to get 200, OK http response.
 
+Add log source in QRadar panel for your LogProxy instance.
 Check your QRadar console to see the message logged.
+
+
+## Deploy it in the cloud
+LogProxy is an application running in a docker, making it easy to deploy in the cloud with provided configuration files.
+
+We assume you already have a container named logproxy deployed.
+
+Login to your IBM account:
+```bash
+ibmcloud login -a cloud.ibm.com
+```
+Create namespace for your app:
+```bash
+ibmcloud cr namespace-add logproxy
+```
+Login to region of your cluster:
+```bash
+ibmcloud cs region-set <region_url>
+```
+Create docker image of logproxy and push to remote repository in cloud:
+```bash
+docker build -t <image_name> .
+docker tag <image_name> <region_url>/<namespace>/<image_name>:<tag>
+docker push <region_url>/<namespace>/<image_name>:<tag>
+```
+
+Set the context for your cluster by copying output of command:
+```bash
+ ibmcloud cs cluster-config logproxy
+```
+
+Update QRADAR_IP environment variable in deployment/deployment.yaml file.
+Create the deployment resource:
+```bash
+kubectl create -f deployment/deployment.yaml
+```
+Create the service resource:
+```bash
+kubectl create -f deployment/service.yaml
+```
+
+Ensure that service is running by visiting http://container_public_ip:service_port_no/.
+
+Now you need to configure QRadar by adding LogSource in Admin tab. To get IP address of vpn interface in docker,
+run command:
+```bash
+kubectl exec -it <pod_name>  -- ifconfig
+```
+
+After QRadar LogSource is configured, see Log Activity tab and observe the logs incoming.
+
+## Test LogCollector
+
+To see how to use LogCollector in Flask application, run examples/flask_example.py with LogProxy IP address and port number:
+```bash
+python3.6 examples/flask_example.py LOG_PROXY_IP  LOG_PROXY_PORT
+```
+and visit 0.0.0.0:5000/ or 0.0.0.0:5000/test.
+See QRadar LogActivity tab to ensure there are logs providing information of your activity.
+
+You can use LogCollector the same way in your Flask application. 

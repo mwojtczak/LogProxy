@@ -1,0 +1,30 @@
+ apiVersion: extensions/v1beta1
+ kind: Deployment
+ metadata:
+   name: logproxy-node-deployment
+ spec:
+   replicas: 1
+   selector:
+     matchLabels:
+       app: logproxy
+   template:
+     metadata:
+       labels:
+         app: logproxy
+     spec:
+       containers:
+       - name: logproxy
+         image: registry.eu-de.bluemix.net/logproxy/logproxy:latest
+         env:
+           - name: QRADAR_IP
+             value: "1.1.1.1"
+         imagePullPolicy: Always
+         ports:
+          - containerPort: 8080
+            name: http
+          - containerPort: 5000
+            name: syslogclient
+         securityContext:
+           capabilities:
+             add:
+               - NET_ADMIN
