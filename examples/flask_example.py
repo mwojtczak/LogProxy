@@ -25,9 +25,22 @@ from log_collector import log_collector
 
 app = Flask(__name__)
 
+
+def get_logproxy_ip():
+    if len(sys.argv) > 1:
+        return sys.argv[1]
+    return "0.0.0.0"
+
+
+def get_logproxy_post():
+    if len(sys.argv) > 2:
+        return int(sys.argv[2])
+    return 8080
+
+
 # define IP address and port number of LogProxy server
-LOGPROXY_IP = "0.0.0.0"
-LOGPROXY_PORT = 8080
+LOGPROXY_IP = get_logproxy_ip()
+LOGPROXY_PORT = get_logproxy_post()
 
 # initialise LogCollector
 scrapper = log_collector.LogCollector(LOGPROXY_IP, LOGPROXY_PORT)
