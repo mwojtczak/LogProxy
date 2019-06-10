@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # get default gateway
 DEF=$(route | grep default | awk '/default/ {print $2}')
 
