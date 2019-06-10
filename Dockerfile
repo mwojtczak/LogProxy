@@ -15,6 +15,8 @@ WORKDIR /logproxy
 RUN pip install  --no-cache-dir -r /logproxy/requirements.txt
 EXPOSE 8080
 EXPOSE 514
-COPY . /logproxy
+COPY ./logproxy.py /logproxy/logproxy.pl
+COPY ./init.sh /logproxy/init.sh
+COPY ./vpn.conf /logproxy/vpn.conf
 ENTRYPOINT ["/bin/bash"]
 CMD ["init.sh"]
