@@ -24,7 +24,7 @@ You should see message:
 ```
 ensuring HTTP server started running. Test the server using REST API e.g. with *curl* command:
 ```bash
-curl -i -X POST -H "Content-Type: application/json"  -d '{"src_ip": "1.1.1.1", "dst_ip": "2.2.2.2", "url": "testurl", "timestamp": "1.12.2019"}' http://0.0.0.0:8080/add_log/
+curl -i -X POST -H "Content-Type: application/json"  -d '{"log": "LOGPROXY:: src_ip=10.10.10.10 url=http://20.20.20.20/home/ timestamp=1560189227"}' http://0.0.0.0:8080/add_log/
 ```
 to get 200, OK http response.
 
