@@ -26,7 +26,7 @@ ensuring HTTP server started running. Test the server using REST API e.g. with *
 ```bash
 curl -i -X POST -H "Content-Type: application/json"  -d '{"log": "LOGPROXY:: src_ip=10.10.10.10 url=http://20.20.20.20/home/ timestamp=1560189227"}' http://0.0.0.0:8080/add_log/
 ```
-to get 200, OK http response.
+to get 201, Created http response.
 
 Add log source in QRadar panel for your LogProxy instance.
 Check your QRadar console to see the message logged.
