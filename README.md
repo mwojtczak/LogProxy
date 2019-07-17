@@ -1,9 +1,17 @@
 # LogProxy
-LogProxy is a tool for extracting logs and forwarding them to [QRadar](https://www.ibm.com/security/security-intelligence/qradar). 
+LogProxy is a tool that analyses incoming requests of web applications and logs selected data to [QRadar](https://www.ibm.com/security/security-intelligence/qradar). 
 
 LogProxy provides REST API enabling wide usage across all types of platforms.
 
-LogProxy is a dockerised service that can be deployed in a cloud using provided configuration.
+LogProxy is a dockerized service that can be deployed in a cloud using a provided configuration.
+
+## Architecture
+LogProxy consists of two main components: LogCollector and LogProxy.
+
+LogCollector is a Flask library that provides a decorator for extracting source IP address of incoming connections. Each IP address is then formatted as a log entry and passed to LogProxy using HTTP protocol.
+
+LogProxy is a dockerized application that connects to a private network of corresponding QRadar instance and forwards received logs to its TCP server.
+
 
 ## Test it locally
 To run LogProxy locally you need to install docker.
