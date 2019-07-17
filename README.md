@@ -11,7 +11,7 @@ LogProxy consists of two main components: LogCollector and LogProxy.
 LogCollector is a Flask library that provides a decorator for extracting source IP address of incoming connections. Each IP address is then formatted as a log entry and passed to LogProxy using HTTP protocol.
 
 LogProxy is a dockerized application that connects to a private network of corresponding QRadar instance and forwards received logs to its TCP server.
-
+![Architecture overview](LogProxyArchitecture.jpg?raw=true "Architecture overview")
 
 ## Test it locally
 To run LogProxy locally you need to install docker.
